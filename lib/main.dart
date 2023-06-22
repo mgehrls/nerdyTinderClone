@@ -1,4 +1,3 @@
-import 'package:fantascan/models/user_model.dart';
 import 'package:fantascan/providers/card_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
