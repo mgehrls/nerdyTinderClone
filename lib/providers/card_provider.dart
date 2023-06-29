@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fantascan/models/user_model.dart';
 import "package:flutter/material.dart";
 import 'package:fluttertoast/fluttertoast.dart';
@@ -35,11 +37,15 @@ class CardProvider extends ChangeNotifier {
 
   void endPosition(DragEndDetails details) {
     _isDragging = false;
-    final status = getStatus();
+    final status = getStatus(force: true);
 
     if (status != null) {
       Fluttertoast.cancel();
-      Fluttertoast.showToast(msg: status.toString());
+      Fluttertoast.showToast(
+        msg: status.toString().split(".").last.toUpperCase(),
+        fontSize: 32,
+        backgroundColor: Colors.black,
+      );
     }
 
     switch (status) {
@@ -102,19 +108,47 @@ class CardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  CardStatus? getStatus() {
+  double getStatusOpacity() {
+    const delta = 100;
+    final pos = max(_position.dx.abs(), _position.dy.abs());
+    final opacity = pos / delta;
+
+    return min(opacity, 1);
+  }
+
+  CardStatus? getStatus({bool force = false}) {
     final x = _position.dx;
     final y = _position.dy;
-    const delta = 100;
+    final forceFavorite = x.abs() < 20;
 
-    if (x > delta) {
-      return CardStatus.interested;
-    } else if (x < -delta) {
-      return CardStatus.notInterested;
-    } else if (y < delta) {
-      return CardStatus.favorited;
-    } else if (y > delta) {
-      return CardStatus.blocked;
+    if (force) {
+      const delta = 100;
+
+      if (x > delta) {
+        return CardStatus.interested;
+      } else if (x < -delta) {
+        return CardStatus.notInterested;
+      } else if (y < -delta && forceFavorite) {
+        return CardStatus.favorited;
+      } else if (y > delta) {
+        return CardStatus.blocked;
+      } else {
+        return null;
+      }
+    } else {
+      const delta = 20;
+
+      if (x > delta) {
+        return CardStatus.interested;
+      } else if (x < -delta) {
+        return CardStatus.notInterested;
+      } else if (y < -delta && forceFavorite) {
+        return CardStatus.favorited;
+      } else if (y > delta) {
+        return CardStatus.blocked;
+      } else {
+        return null;
+      }
     }
   }
 

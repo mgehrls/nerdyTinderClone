@@ -59,13 +59,18 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Expanded(child: buildCards()),
-                ],
-              )),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                buildLogo(),
+                const SizedBox(height: 8),
+                Expanded(child: buildCards()),
+                const SizedBox(height: 8),
+                buildButtons(),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -81,31 +86,106 @@ class _MyHomePageState extends State<MyHomePage> {
             ))
         .toList();
 
-    return Stack(
-      children: userCards,
-    );
+    if (userCards.isEmpty) {
+      return Center(
+          child: ElevatedButton(
+        onPressed: () {
+          provider.resetUsers();
+        },
+        child: const Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text(
+            'Reset',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ));
+    } else {
+      return Stack(
+        children: userCards,
+      );
+    }
   }
 
   Widget buildButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: () {},
-          child: const Icon(Icons.clear, color: Colors.red, size: 32),
-        ),
-        ElevatedButton(
-            onPressed: () {},
-            child: const Icon(Icons.star, color: Colors.blue, size: 32)),
-        ElevatedButton(
-            onPressed: () {},
-            child: const Icon(Icons.favorite, color: Colors.teal, size: 32))
-      ],
+    final provider = Provider.of<CardProvider>(context);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            style: ButtonStyle(
+              foregroundColor: getColor(Colors.red, Colors.white, false),
+              backgroundColor: getColor(Colors.white, Colors.red, false),
+              side: getBorder(Colors.red, Colors.red, false),
+            ),
+            onPressed: () {
+              provider.notInterested();
+            },
+            child: const Icon(Icons.clear, color: Colors.red, size: 32),
+          ),
+          ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor: getColor(Colors.blue, Colors.white, false),
+                backgroundColor: getColor(Colors.white, Colors.blue, false),
+                side: getBorder(Colors.blue, Colors.blue, false),
+              ),
+              onPressed: () {
+                provider.favorite();
+              },
+              child: const Icon(Icons.star, color: Colors.blue, size: 32)),
+          ElevatedButton(
+              style: ButtonStyle(
+                foregroundColor: getColor(Colors.teal, Colors.white, false),
+                backgroundColor: getColor(Colors.white, Colors.teal, false),
+                side: getBorder(Colors.teal, Colors.teal, false),
+              ),
+              onPressed: () {
+                provider.like();
+              },
+              child: const Icon(Icons.favorite, color: Colors.teal, size: 32))
+        ],
+      ),
     );
+  }
+
+  MaterialStateProperty<Color> getColor(
+      Color color, Color colorPressed, bool forced) {
+    getColor(Set<MaterialState> states) {
+      if (forced || states.contains(MaterialState.pressed)) {
+        return colorPressed;
+      } else {
+        return color;
+      }
+    }
+
+    return MaterialStateProperty.resolveWith(getColor);
+  }
+
+  MaterialStateProperty<BorderSide> getBorder(
+      Color color, Color colorPressed, forced) {
+    getBorder(Set<MaterialState> states) {
+      if (forced || states.contains(MaterialState.pressed)) {
+        return const BorderSide(color: Colors.transparent);
+      } else {
+        return BorderSide(color: color, width: 2);
+      }
+    }
+
+    return MaterialStateProperty.resolveWith(getBorder);
   }
 
   Widget buildLogo() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: const [
         Icon(Icons.align_horizontal_center_outlined,
             color: Colors.white, size: 32),

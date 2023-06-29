@@ -47,7 +47,10 @@ class _UserCardState extends State<UserCard> {
               curve: Curves.easeInOut,
               duration: Duration(milliseconds: milliseconds),
               transform: rotatedMatrix..translate(position.dx, position.dy),
-              child: buildCard());
+              child: Stack(children: [
+                buildCard(),
+                buildStamps(),
+              ]));
         }),
         onPanStart: (details) {
           final provider = Provider.of<CardProvider>(context, listen: false);
@@ -111,10 +114,86 @@ class _UserCardState extends State<UserCard> {
         ],
       );
 
+  Widget buildStamps() {
+    final provider = Provider.of<CardProvider>(context);
+    final status = provider.getStatus();
+    final opacity = provider.getStatusOpacity();
+
+    switch (status) {
+      case CardStatus.interested:
+        final child = buildStamp(
+          angle: -.5,
+          color: Colors.green,
+          text: "LIKE",
+          opacity: opacity,
+        );
+        return Positioned(top: 64, left: 50, child: child);
+      case CardStatus.notInterested:
+        final child = buildStamp(
+          angle: .5,
+          color: Colors.red,
+          text: "NOPE",
+          opacity: opacity,
+        );
+        return Positioned(top: 64, right: 50, child: child);
+      case CardStatus.favorited:
+        final child = buildStamp(
+          angle: 0,
+          color: Colors.blue,
+          text: "FAVED :)",
+          opacity: opacity,
+        );
+        return Positioned(bottom: 100, left: 0, right: 0, child: child);
+      case CardStatus.blocked:
+        final child = buildStamp(
+          angle: 0,
+          color: Colors.black,
+          text: "BLOCKED :(",
+          opacity: opacity,
+        );
+        return Positioned(top: 100, left: 0, right: 0, child: child);
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget buildStamp({
+    required double angle,
+    required Color color,
+    required String text,
+    required double opacity,
+  }) {
+    return Opacity(
+      opacity: opacity,
+      child: Transform.rotate(
+        angle: angle,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: color, width: 4)),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: color,
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildCard() => ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Container(
         decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: [
+            Colors.grey,
+            Colors.blueGrey,
+          ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
           image: DecorationImage(
             image: NetworkImage(widget.user.urlImagePrimary),
             fit: BoxFit.cover,
