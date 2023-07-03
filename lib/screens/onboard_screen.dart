@@ -21,16 +21,18 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
   @override
   Widget build(BuildContext context) {
     final appStateProvider = Provider.of<AppStateProvider>(context);
-    return Scaffold(
-      body: Center(
-          child: Column(
-        children: [
-          const Text("This is Onboard Screen"),
-          ElevatedButton(
-              onPressed: () => onSubmitDone(appStateProvider, context),
-              child: const Text("Done/Skip"))
-        ],
-      )),
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+            child: Column(
+          children: [
+            const Text("This is Onboard Screen"),
+            ElevatedButton(
+                onPressed: () => onSubmitDone(appStateProvider, context),
+                child: const Text("Done/Skip"))
+          ],
+        )),
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ enum AppPage {
   onboard,
   auth,
   home,
+  chat,
 }
 
 extension AppPageExtension on AppPage {
@@ -18,6 +19,9 @@ extension AppPageExtension on AppPage {
       case AppPage.auth:
         return "/auth";
 
+      case AppPage.chat:
+        return "/chat";
+
       default:
         return "/";
     }
@@ -28,6 +32,9 @@ extension AppPageExtension on AppPage {
     switch (this) {
       case AppPage.home:
         return "HOME";
+
+      case AppPage.chat:
+        return "CHAT";
 
       case AppPage.onboard:
         return "ONBOARD";
@@ -45,6 +52,9 @@ extension AppPageExtension on AppPage {
     switch (this) {
       case AppPage.home:
         return "Fantascan";
+
+      case AppPage.chat:
+        return "FantaChat";
 
       default:
         return "Fantascan";

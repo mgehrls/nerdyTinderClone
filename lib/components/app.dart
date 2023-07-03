@@ -7,11 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/app_router.dart';
 
 class MyApp extends StatefulWidget {
-// Declared fields prefs which we will pass to the router class
-  //=======================change #1==========/
   SharedPreferences prefs;
   MyApp({required this.prefs, Key? key}) : super(key: key);
-  //=======================change #1 end===========/
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -22,14 +19,12 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AppStateProvider()),
-        //=======================change #2==========/
-        // Remove previous Provider call and create new proxyprovider that depends on AppStateProvider
+        // ProxyProvider makes the AppRouter contingent on the State provider. If auth changes, so does the route.
         ProxyProvider<AppStateProvider, AppRouter>(
             update: (context, appStateProvider, _) => AppRouter(
                 appStateProvider: appStateProvider, prefs: widget.prefs)),
         ChangeNotifierProvider(create: (context) => CardProvider()),
       ],
-      //=======================change #2 end==========/
       child: Builder(
         builder: ((context) {
           final GoRouter router = Provider.of<AppRouter>(context).router;

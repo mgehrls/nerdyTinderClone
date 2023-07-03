@@ -1,5 +1,8 @@
 import 'package:fantascan/components/header.dart';
+import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   BuildContext context;
@@ -15,6 +18,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
+    AppStateProvider appStateProvider = Provider.of<AppStateProvider>(context);
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -37,8 +41,13 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(height: 8),
                 Expanded(
                     child: Column(
-                  children: const [
-                    Text('Chat Screen'),
+                  children: [
+                    const Text('Chat Screen'),
+                    ElevatedButton(
+                        onPressed: () {
+                          appStateProvider.resetOnboarding();
+                        },
+                        child: const Text('Reset Onboarding')),
                   ],
                 )),
                 const SizedBox(height: 8),

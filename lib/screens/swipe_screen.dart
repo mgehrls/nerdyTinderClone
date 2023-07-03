@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import '../components/user_card.dart';
 
 class SwipeScreen extends StatefulWidget {
-  BuildContext context;
+  final BuildContext context;
 
-  SwipeScreen({super.key, required this.title, required this.context});
+  const SwipeScreen({super.key, required this.title, required this.context});
 
   final String title;
 

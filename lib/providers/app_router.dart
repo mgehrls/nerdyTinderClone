@@ -1,5 +1,6 @@
 import 'package:fantascan/models/app_page_extension.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
+import 'package:fantascan/screens/chat_screen.dart';
 import 'package:fantascan/screens/onboard_screen.dart';
 import 'package:fantascan/screens/swipe_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -23,12 +24,19 @@ class AppRouter {
             name: AppPage.home.routeName,
             builder: (context, state) => SwipeScreen(
                   context: context,
-                  title: 'Swipe screen',
+                  title: AppPage.home.routePageTitle,
                 )),
         GoRoute(
             path: AppPage.onboard.routePath,
             name: AppPage.onboard.routeName,
             builder: (context, state) => const OnBoardScreen()),
+        GoRoute(
+            path: AppPage.chat.routePath,
+            name: AppPage.chat.routeName,
+            builder: (context, state) => ChatScreen(
+                  context: context,
+                  title: AppPage.chat.routePageTitle,
+                )),
       ],
       redirect: (context, state) {
         // define the named path of onboard screen
