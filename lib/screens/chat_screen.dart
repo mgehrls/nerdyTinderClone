@@ -2,7 +2,6 @@ import 'package:fantascan/components/header.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   BuildContext context;
