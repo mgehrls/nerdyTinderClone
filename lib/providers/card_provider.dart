@@ -17,10 +17,6 @@ class CardProvider extends ChangeNotifier {
   Offset get position => _position;
   double get angle => _angle;
 
-  CardProvider() {
-    resetUsers();
-  }
-
   void startPosition(DragStartDetails details) {
     _isDragging = true;
     notifyListeners();
@@ -159,6 +155,11 @@ class CardProvider extends ChangeNotifier {
 
   void setScreenSize(Size size) {
     _screenSize = size;
+    notifyListeners();
+  }
+
+  void setUsers(List<User>? users) {
+    _users = users ?? [];
     notifyListeners();
   }
 

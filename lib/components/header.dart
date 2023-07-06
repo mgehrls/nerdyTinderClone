@@ -20,8 +20,8 @@ Widget buildHeader(context) {
           onPressed: () {
             GoRouter.of(context).go('/');
           },
-          child: Row(
-            children: const [
+          child: const Row(
+            children: [
               Icon(Icons.align_horizontal_center_outlined,
                   color: Colors.white, size: 32),
               SizedBox(width: 4),

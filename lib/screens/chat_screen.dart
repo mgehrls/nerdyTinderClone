@@ -1,7 +1,11 @@
 import 'package:fantascan/components/header.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
+import 'package:fantascan/providers/db_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/card_provider.dart';
 
 class ChatScreen extends StatefulWidget {
   BuildContext context;
@@ -47,6 +51,16 @@ class _ChatScreenState extends State<ChatScreen> {
                           appStateProvider.resetOnboarding();
                         },
                         child: const Text('Reset Onboarding')),
+                    ElevatedButton(
+                        onPressed: () {
+                          getUsers();
+                        },
+                        child: const Text('Get Users')),
+                    ElevatedButton(
+                        onPressed: () {
+                          GoRouter.of(context).go('/login');
+                        },
+                        child: const Text('Go to Login Screen')),
                   ],
                 )),
                 const SizedBox(height: 8),
@@ -56,5 +70,11 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  void getUsers() async {
+    final db = Provider.of<DbProvider>(context, listen: false);
+    final cardProvider = Provider.of<CardProvider>(context, listen: false);
+    cardProvider.setUsers(await db.getUsers());
   }
 }

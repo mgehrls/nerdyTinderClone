@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "334212847711",
+    "project_id": "tinderclone-4b2e5",
+    "storage_bucket": "tinderclone-4b2e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334212847711:android:a273fff8ac4d3a5527a3ea",
+        "android_client_info": {
+          "package_name": "com.example.fantascan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334212847711-bkon5etilmski1tcpppo4clv83cid0nu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEr88-wu8NQFDkFvFJR9pgtD0y2hCVc4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "334212847711-bkon5etilmski1tcpppo4clv83cid0nu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "334212847711-rapjgmqqp6qvifjm0aav6db1b7sl38pp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "host.exp.exponent"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334212847711:android:5d2e1e8820b9fa3c27a3ea",
+        "android_client_info": {
+          "package_name": "host.exp.exponent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334212847711-u77rjknp3df0u307040qpioi362teugj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "host.exp.exponent",
+            "certificate_hash": "3b23f43234dc0b864ddd7c668a51cda9b059c379"
+          }
+        },
+        {
+          "client_id": "334212847711-bkon5etilmski1tcpppo4clv83cid0nu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEr88-wu8NQFDkFvFJR9pgtD0y2hCVc4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "334212847711-bkon5etilmski1tcpppo4clv83cid0nu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "334212847711-rapjgmqqp6qvifjm0aav6db1b7sl38pp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "host.exp.exponent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

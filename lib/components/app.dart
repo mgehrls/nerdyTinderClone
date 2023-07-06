@@ -1,5 +1,6 @@
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:fantascan/providers/card_provider.dart';
+import 'package:fantascan/providers/db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class _MyAppState extends State<MyApp> {
             update: (context, appStateProvider, _) => AppRouter(
                 appStateProvider: appStateProvider, prefs: widget.prefs)),
         ChangeNotifierProvider(create: (context) => CardProvider()),
+        ChangeNotifierProvider(create: (context) => DbProvider()),
       ],
       child: Builder(
         builder: ((context) {

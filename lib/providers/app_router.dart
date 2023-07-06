@@ -1,6 +1,7 @@
 import 'package:fantascan/models/app_page_extension.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:fantascan/screens/chat_screen.dart';
+import 'package:fantascan/screens/login_screen.dart';
 import 'package:fantascan/screens/onboard_screen.dart';
 import 'package:fantascan/screens/swipe_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -37,6 +38,10 @@ class AppRouter {
                   context: context,
                   title: AppPage.chat.routePageTitle,
                 )),
+        GoRoute(
+            path: AppPage.login.routePath,
+            name: AppPage.login.routeName,
+            builder: (context, state) => const LoginScreen()),
       ],
       redirect: (context, state) {
         // define the named path of onboard screen
