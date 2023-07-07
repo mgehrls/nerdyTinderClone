@@ -1,6 +1,7 @@
 import 'package:fantascan/components/header.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:fantascan/providers/db_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -57,10 +58,12 @@ class _ChatScreenState extends State<ChatScreen> {
                         },
                         child: const Text('Get Users')),
                     ElevatedButton(
-                        onPressed: () {
-                          GoRouter.of(context).go('/login');
+                        onPressed: () async {
+                          await FirebaseAuth.instance
+                              .signOut()
+                              .whenComplete(() => GoRouter.of(context).go('/'));
                         },
-                        child: const Text('Go to Login Screen')),
+                        child: const Text('Sign Out')),
                   ],
                 )),
                 const SizedBox(height: 8),
