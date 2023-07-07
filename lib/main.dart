@@ -19,8 +19,6 @@ void main() async {
     name: 'fantascan',
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
-  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
 
   runApp(MyApp(prefs: prefs));
 }

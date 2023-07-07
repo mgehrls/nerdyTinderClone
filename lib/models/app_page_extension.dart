@@ -4,7 +4,6 @@ enum AppPage {
   auth,
   home,
   chat,
-  login,
 }
 
 extension AppPageExtension on AppPage {
@@ -22,9 +21,6 @@ extension AppPageExtension on AppPage {
 
       case AppPage.chat:
         return "/chat";
-
-      case AppPage.login:
-        return "/login";
 
       default:
         return "/";
@@ -45,9 +41,6 @@ extension AppPageExtension on AppPage {
 
       case AppPage.auth:
         return "AUTH";
-
-      case AppPage.login:
-        return "LOGIN";
 
       default:
         return "HOME";

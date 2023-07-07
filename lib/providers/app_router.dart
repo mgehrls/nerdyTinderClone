@@ -4,6 +4,8 @@ import 'package:fantascan/screens/chat_screen.dart';
 import 'package:fantascan/screens/login_screen.dart';
 import 'package:fantascan/screens/onboard_screen.dart';
 import 'package:fantascan/screens/swipe_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,12 +23,23 @@ class AppRouter {
       initialLocation: "/",
       routes: [
         GoRoute(
-            path: AppPage.home.routePath,
-            name: AppPage.home.routeName,
-            builder: (context, state) => SwipeScreen(
-                  context: context,
+          path: AppPage.home.routePath,
+          name: AppPage.home.routeName,
+          builder: (context, state) => Scaffold(
+              body: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return SwipeScreen(
                   title: AppPage.home.routePageTitle,
-                )),
+                  context: context,
+                );
+              } else {
+                return const LoginWidget();
+              }
+            },
+          )),
+        ),
         GoRoute(
             path: AppPage.onboard.routePath,
             name: AppPage.onboard.routeName,
@@ -38,10 +51,6 @@ class AppRouter {
                   context: context,
                   title: AppPage.chat.routePageTitle,
                 )),
-        GoRoute(
-            path: AppPage.login.routePath,
-            name: AppPage.login.routeName,
-            builder: (context, state) => const LoginScreen()),
       ],
       redirect: (context, state) {
         // define the named path of onboard screen
