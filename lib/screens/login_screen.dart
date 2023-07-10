@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
@@ -25,9 +26,20 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.blue,
+              Colors.teal,
+            ],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+          ),
+        ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
@@ -64,6 +76,21 @@ class _LoginWidgetState extends State<LoginWidget> {
                 ),
               ],
             ),
+            const SizedBox(height: 64),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text('Don\'t have an account?'),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.person_add),
+                  onPressed: () {
+                    GoRouter.of(context).go('/register');
+                  },
+                  label: const Text('Create Account'),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -71,7 +98,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   Future signIn() async {
-    print('signing in');
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: emailController.text.trim(),
       password: passwordController.text.trim(),

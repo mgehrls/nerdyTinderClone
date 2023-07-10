@@ -20,4 +20,12 @@ class DbProvider extends ChangeNotifier {
         });
     return users;
   }
+
+  Future<bool> checkUser(String uid) async {
+    return await db
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((value) => value.exists);
+  }
 }

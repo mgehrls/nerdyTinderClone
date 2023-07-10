@@ -1,8 +1,10 @@
 import 'package:fantascan/models/app_page_extension.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:fantascan/screens/chat_screen.dart';
+import 'package:fantascan/screens/intro_screen.dart';
 import 'package:fantascan/screens/login_screen.dart';
 import 'package:fantascan/screens/onboard_screen.dart';
+import 'package:fantascan/screens/registration_screen.dart';
 import 'package:fantascan/screens/swipe_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +53,15 @@ class AppRouter {
                   context: context,
                   title: AppPage.chat.routePageTitle,
                 )),
+        GoRoute(
+            path: AppPage.register.routePath,
+            name: AppPage.register.routeName,
+            builder: (context, state) => const RegistrationWidget()),
+        GoRoute(
+          path: AppPage.intro.routePath,
+          name: AppPage.intro.routeName,
+          builder: (context, state) => const IntroScreen(),
+        ),
       ],
       redirect: (context, state) {
         // define the named path of onboard screen
