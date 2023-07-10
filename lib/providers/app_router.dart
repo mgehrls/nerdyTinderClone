@@ -4,7 +4,9 @@ import 'package:fantascan/screens/chat_screen.dart';
 import 'package:fantascan/screens/intro_screen.dart';
 import 'package:fantascan/screens/login_screen.dart';
 import 'package:fantascan/screens/onboard_screen.dart';
+import 'package:fantascan/screens/profile_screen.dart';
 import 'package:fantascan/screens/registration_screen.dart';
+import 'package:fantascan/screens/settings_screen.dart';
 import 'package:fantascan/screens/swipe_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -49,10 +51,7 @@ class AppRouter {
         GoRoute(
             path: AppPage.chat.routePath,
             name: AppPage.chat.routeName,
-            builder: (context, state) => ChatScreen(
-                  context: context,
-                  title: AppPage.chat.routePageTitle,
-                )),
+            builder: (context, state) => const ChatScreen()),
         GoRoute(
             path: AppPage.register.routePath,
             name: AppPage.register.routeName,
@@ -61,6 +60,18 @@ class AppRouter {
           path: AppPage.intro.routePath,
           name: AppPage.intro.routeName,
           builder: (context, state) => const IntroScreen(),
+        ),
+        GoRoute(
+          path: AppPage.profile.routePath,
+          name: AppPage.profile.routeName,
+          builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: AppPage.settings.routePath,
+          name: AppPage.settings.routeName,
+          builder: (context, state) => SettingsScreen(
+            context: context,
+          ),
         ),
       ],
       redirect: (context, state) {

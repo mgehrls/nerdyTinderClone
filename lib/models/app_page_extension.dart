@@ -6,6 +6,8 @@ enum AppPage {
   chat,
   register,
   intro,
+  profile,
+  settings,
 }
 
 extension AppPageExtension on AppPage {
@@ -29,6 +31,12 @@ extension AppPageExtension on AppPage {
 
       case AppPage.intro:
         return "/intro";
+
+      case AppPage.profile:
+        return "/profile";
+
+      case AppPage.settings:
+        return "/settings";
 
       default:
         return "/";
@@ -55,6 +63,12 @@ extension AppPageExtension on AppPage {
 
       case AppPage.intro:
         return "INTRO";
+
+      case AppPage.profile:
+        return "PROFILE";
+
+      case AppPage.settings:
+        return "SETTINGS";
 
       default:
         return "HOME";

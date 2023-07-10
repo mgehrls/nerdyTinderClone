@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 Widget buildHeader(context) {
   return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       ElevatedButton(
@@ -20,22 +20,22 @@ Widget buildHeader(context) {
           onPressed: () {
             GoRouter.of(context).go('/');
           },
-          child: const Row(
-            children: [
-              Icon(Icons.align_horizontal_center_outlined,
-                  color: Colors.white, size: 32),
-              SizedBox(width: 4),
-              Text(
-                'Fantascan',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          )),
-      const Spacer(),
+          child: const Icon(Icons.home, color: Colors.white, size: 32)),
+      ElevatedButton(
+          style: ButtonStyle(
+            padding: MaterialStateProperty.all<EdgeInsets>(
+                const EdgeInsets.all(5.0)),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Colors.transparent),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: const BorderSide(color: Colors.white))),
+          ),
+          onPressed: () {
+            GoRouter.of(context).go('/profile');
+          },
+          child: const Icon(Icons.person, color: Colors.white, size: 32)),
       ElevatedButton(
           style: ButtonStyle(
             padding: MaterialStateProperty.all<EdgeInsets>(
@@ -50,7 +50,23 @@ Widget buildHeader(context) {
           onPressed: () {
             GoRouter.of(context).go('/chat');
           },
-          child: const Icon(Icons.chat_outlined, color: Colors.white, size: 32))
+          child:
+              const Icon(Icons.chat_outlined, color: Colors.white, size: 32)),
+      ElevatedButton(
+          style: ButtonStyle(
+            padding: MaterialStateProperty.all<EdgeInsets>(
+                const EdgeInsets.all(5.0)),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Colors.transparent),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: const BorderSide(color: Colors.white))),
+          ),
+          onPressed: () {
+            GoRouter.of(context).go('/settings');
+          },
+          child: const Icon(Icons.settings, color: Colors.white, size: 32)),
     ],
   );
 }

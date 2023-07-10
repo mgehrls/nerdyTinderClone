@@ -2,16 +2,16 @@ import 'package:fantascan/components/header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _ChatScreenState();
+    return _ProfileScreenState();
   }
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
