@@ -44,7 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Expanded(
                     child: Column(
                   children: [
-                    const Text('Chat Screen'),
+                    const Text('Setting Screen'),
                     ElevatedButton(
                         onPressed: () {
                           appStateProvider.resetOnboarding();

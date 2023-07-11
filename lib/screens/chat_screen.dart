@@ -49,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'This is where the profiles go',
+                        'This is where the chats go',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 32,

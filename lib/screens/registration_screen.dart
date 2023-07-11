@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/db_provider.dart';
 
 class RegistrationWidget extends StatefulWidget {
@@ -17,6 +16,7 @@ class RegistrationWidget extends StatefulWidget {
 class _RegistrationWidgetState extends State<RegistrationWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  late String errorCode = "";
 
   @override
   void dispose() {
@@ -31,6 +31,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     return Material(
       child: SafeArea(
         child: Container(
+          height: MediaQuery.of(context).size.height,
           padding: const EdgeInsets.all(32),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -46,6 +47,12 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  GoRouter.of(context).go('/');
+                },
+              ),
               const Text(
                 'Register',
                 style: TextStyle(
@@ -55,38 +62,8 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
-                controller: emailController,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: passwordController,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  labelStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
+              buildTextFields(),
+              const SizedBox(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -99,6 +76,12 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                   ),
                 ],
               ),
+              errorCode != ""
+                  ? Text(
+                      errorCode,
+                      style: const TextStyle(color: Colors.red),
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),
@@ -106,20 +89,65 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     );
   }
 
+  Widget buildTextFields() {
+    return Column(
+      children: [
+        TextField(
+          controller: emailController,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+          decoration: const InputDecoration(
+            labelText: 'Email',
+            labelStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: passwordController,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+          decoration: const InputDecoration(
+            labelText: 'Password',
+            labelStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Future register(context) async {
     final db = Provider.of<DbProvider>(context, listen: false);
-
-    await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        )
-        .then((value) async => {
-              if (await db.checkUser(FirebaseAuth.instance.currentUser!.uid))
-                {GoRouter.of(context).go('/')}
-              else
-                {GoRouter.of(context).go('/intro')}
-            });
+    if (emailController.text.trim().isEmpty ||
+        passwordController.text.trim().isEmpty) {
+      return;
+    }
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          )
+          .then((value) async => {
+                if (await db.checkUser(FirebaseAuth.instance.currentUser!.uid))
+                  {GoRouter.of(context).go('/')}
+                else
+                  {GoRouter.of(context).go('/intro')}
+              });
+    } catch (e) {
+      setState(() {
+        errorCode = e.toString();
+      });
+    }
 
     if (FirebaseAuth.instance.currentUser != null) {
       GoRouter.of(context).go('/intro');

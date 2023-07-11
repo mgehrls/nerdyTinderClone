@@ -47,5 +47,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>User must add photos to their profile. User has the option to use their phone's gallery to acheive that.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>User must add photos to their profile. User has the option to use their camera to acheive that.</string>
 </dict>
 </plist>
