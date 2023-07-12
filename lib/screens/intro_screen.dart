@@ -15,7 +15,11 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
+  String? name;
+  int? age;
   File? image;
+  File? image2;
+  File? image3;
 
   @override
   Widget build(BuildContext context) {
