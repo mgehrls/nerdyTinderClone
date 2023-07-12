@@ -16,6 +16,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 DbProvider dbProvider = DbProvider();
 
+CustomTransitionPage buildPageWithDefaultTransition<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+        FadeTransition(opacity: animation, child: child),
+  );
+}
+
 class AppRouter {
   AppRouter({
     required this.appStateProvider,
@@ -32,6 +45,28 @@ class AppRouter {
         GoRoute(
           path: AppPage.home.routePath,
           name: AppPage.home.routeName,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: Scaffold(
+              body: StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && prefs.getBool('profileCreated')!) {
+                    return SwipeScreen(
+                      title: AppPage.home.routePageTitle,
+                      context: context,
+                    );
+                  } else if (snapshot.hasData &&
+                      !prefs.getBool('profileCreated')!) {
+                    return const ProfileCreateScreen();
+                  } else {
+                    return const LoginWidget();
+                  }
+                },
+              ),
+            ),
+          ),
           builder: (context, state) => Scaffold(
               body: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
@@ -50,28 +85,60 @@ class AppRouter {
         GoRoute(
             path: AppPage.onboard.routePath,
             name: AppPage.onboard.routeName,
+            pageBuilder: (context, state) => buildPageWithDefaultTransition(
+                  context: context,
+                  state: state,
+                  child: const OnBoardScreen(),
+                ),
             builder: (context, state) => const OnBoardScreen()),
         GoRoute(
             path: AppPage.chat.routePath,
             name: AppPage.chat.routeName,
+            pageBuilder: (context, state) => buildPageWithDefaultTransition(
+                  context: context,
+                  state: state,
+                  child: const ChatScreen(),
+                ),
             builder: (context, state) => const ChatScreen()),
         GoRoute(
             path: AppPage.register.routePath,
             name: AppPage.register.routeName,
+            pageBuilder: (context, state) => buildPageWithDefaultTransition(
+                  context: context,
+                  state: state,
+                  child: const RegistrationWidget(),
+                ),
             builder: (context, state) => const RegistrationWidget()),
         GoRoute(
           path: AppPage.profileCreate.routePath,
           name: AppPage.profileCreate.routeName,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: const ProfileCreateScreen(),
+          ),
           builder: (context, state) => const ProfileCreateScreen(),
         ),
         GoRoute(
           path: AppPage.profile.routePath,
           name: AppPage.profile.routeName,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: const ProfileScreen(),
+          ),
           builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
           path: AppPage.settings.routePath,
           name: AppPage.settings.routeName,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: SettingsScreen(
+              context: context,
+            ),
+          ),
           builder: (context, state) => SettingsScreen(
             context: context,
           ),
@@ -79,24 +146,15 @@ class AppRouter {
       ],
       redirect: (context, state) {
         //define paths for redirect
-        final String profileCreatePath =
-            state.namedLocation(AppPage.profileCreate.routeName);
         final String onboardPath =
             state.namedLocation(AppPage.onboard.routeName);
         bool isOnboarding = state.location == onboardPath;
         // check if sharedPref as onBoardCount key or not
         //if is does then we won't onboard else we will
-        bool toOnboard = prefs.containsKey('onBoardCount') ? false : true;
-        bool toProfileCreate =
-            prefs.containsKey('profileCreated') ? false : true;
+        bool toOnboard = prefs.getBool('onBoarded')! ? false : true;
 
-        if (toProfileCreate) {
-          // return null if the current location is already ProfileCreateScreen to prevent looping
-          return isOnboarding || state.location == profileCreatePath
-              ? null
-              : profileCreatePath;
-        } else if (toOnboard) {
-          // return null if the current location is already OnboardScreen to prevent looping
+        if (toOnboard) {
+          // return null if the current location is already OnBoardScreen to prevent looping
           return isOnboarding ? null : onboardPath;
         }
         // returning null will tell router to don't mind redirect section
