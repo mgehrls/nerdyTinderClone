@@ -1,23 +1,21 @@
 import 'dart:io';
-
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class IntroScreen extends StatefulWidget {
-  const IntroScreen({super.key});
+class ProfileCreateScreen extends StatefulWidget {
+  const ProfileCreateScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _IntroScreenState();
+    return _ProfileCreateScreenState();
   }
 }
 
-class _IntroScreenState extends State<IntroScreen> {
+class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
   String? name;
   int? age;
   File? image;
@@ -71,7 +69,7 @@ class _IntroScreenState extends State<IntroScreen> {
                   ],
                 ),
                 const Text(
-                  'This is where the intro goes',
+                  'This is where the profileCreate goes',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 32,
@@ -108,7 +106,7 @@ class _IntroScreenState extends State<IntroScreen> {
                     provider.profileCreated();
                     GoRouter.of(context).go('/');
                   },
-                  child: const Text('Skip Intro'),
+                  child: const Text('Skip ProfileCreate'),
                 ),
                 const SizedBox(height: 16),
               ]),

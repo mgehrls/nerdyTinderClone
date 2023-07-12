@@ -143,7 +143,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 if (await db.checkUser(FirebaseAuth.instance.currentUser!.uid))
                   {GoRouter.of(context).go('/')}
                 else
-                  {GoRouter.of(context).go('/intro')}
+                  {GoRouter.of(context).go('/profileCreate')}
               });
     } catch (e) {
       setState(() {
@@ -152,7 +152,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
     }
 
     if (FirebaseAuth.instance.currentUser != null) {
-      GoRouter.of(context).go('/intro');
+      GoRouter.of(context).go('/profileCreate');
     }
   }
 }

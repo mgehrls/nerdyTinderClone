@@ -2,7 +2,7 @@ import 'package:fantascan/models/app_page_extension.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:fantascan/providers/db_provider.dart';
 import 'package:fantascan/screens/chat_screen.dart';
-import 'package:fantascan/screens/intro_screen.dart';
+import 'package:fantascan/screens/profile_create_screen.dart';
 import 'package:fantascan/screens/login_screen.dart';
 import 'package:fantascan/screens/onboard_screen.dart';
 import 'package:fantascan/screens/profile_screen.dart';
@@ -60,9 +60,9 @@ class AppRouter {
             name: AppPage.register.routeName,
             builder: (context, state) => const RegistrationWidget()),
         GoRoute(
-          path: AppPage.intro.routePath,
-          name: AppPage.intro.routeName,
-          builder: (context, state) => const IntroScreen(),
+          path: AppPage.profileCreate.routePath,
+          name: AppPage.profileCreate.routeName,
+          builder: (context, state) => const ProfileCreateScreen(),
         ),
         GoRoute(
           path: AppPage.profile.routePath,
@@ -80,7 +80,7 @@ class AppRouter {
       redirect: (context, state) {
         //define paths for redirect
         final String profileCreatePath =
-            state.namedLocation(AppPage.intro.routeName);
+            state.namedLocation(AppPage.profileCreate.routeName);
         final String onboardPath =
             state.namedLocation(AppPage.onboard.routeName);
         bool isOnboarding = state.location == onboardPath;
