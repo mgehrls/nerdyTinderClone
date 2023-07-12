@@ -10,6 +10,20 @@ class AppStateProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void profileCreated() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // set the onBoardCount to 1, the app only looks for if the value exists or not
+    await prefs.setInt('profileCreated', 1);
+    // Notify listener provides converted value to all it listeneres
+    notifyListeners();
+  }
+
+  resetProfileCreated() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('profileCreated');
+    notifyListeners();
+  }
+
   void resetOnboarding() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('onBoardCount');

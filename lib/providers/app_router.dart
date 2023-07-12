@@ -1,5 +1,6 @@
 import 'package:fantascan/models/app_page_extension.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
+import 'package:fantascan/providers/db_provider.dart';
 import 'package:fantascan/screens/chat_screen.dart';
 import 'package:fantascan/screens/intro_screen.dart';
 import 'package:fantascan/screens/login_screen.dart';
@@ -12,6 +13,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+DbProvider dbProvider = DbProvider();
 
 class AppRouter {
   AppRouter({
@@ -75,25 +78,28 @@ class AppRouter {
         ),
       ],
       redirect: (context, state) {
-        // define the named path of onboard screen
+        //define paths for redirect
+        final String profileCreatePath =
+            state.namedLocation(AppPage.intro.routeName);
         final String onboardPath =
-            state.namedLocation(AppPage.onboard.routeName); //#4.1
-
-        // Checking if current path is onboarding or not
-        bool isOnboarding = state.location == onboardPath; //#4.2
-
+            state.namedLocation(AppPage.onboard.routeName);
+        bool isOnboarding = state.location == onboardPath;
         // check if sharedPref as onBoardCount key or not
         //if is does then we won't onboard else we will
-        bool toOnboard =
-            prefs.containsKey('onBoardCount') ? false : true; //#4.3
+        bool toOnboard = prefs.containsKey('onBoardCount') ? false : true;
+        bool toProfileCreate =
+            prefs.containsKey('profileCreated') ? false : true;
 
-        //#4.4
-        if (toOnboard) {
+        if (toProfileCreate) {
+          // return null if the current location is already ProfileCreateScreen to prevent looping
+          return isOnboarding || state.location == profileCreatePath
+              ? null
+              : profileCreatePath;
+        } else if (toOnboard) {
           // return null if the current location is already OnboardScreen to prevent looping
           return isOnboarding ? null : onboardPath;
         }
         // returning null will tell router to don't mind redirect section
-        return null; //#4.5
-        //=======================change #4  end===========/
+        return null;
       });
 }

@@ -52,6 +52,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: const Text('Reset Onboarding')),
                     ElevatedButton(
                         onPressed: () {
+                          appStateProvider.resetProfileCreated();
+                        },
+                        child: const Text('Reset Profile Created')),
+                    ElevatedButton(
+                        onPressed: () {
                           getUsers();
                         },
                         child: const Text('Get Users')),
