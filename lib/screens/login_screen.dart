@@ -14,6 +14,7 @@ class LoginWidget extends StatefulWidget {
 class _LoginWidgetState extends State<LoginWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  String errorMessage = "";
 
   @override
   void dispose() {
@@ -80,7 +81,17 @@ class _LoginWidgetState extends State<LoginWidget> {
                 ),
                 obscureText: true,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
+              errorMessage.isNotEmpty
+                  ? Text(
+                      errorMessage,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -119,9 +130,15 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    );
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+    } catch (e) {
+      setState(() {
+        errorMessage = e.toString();
+      });
+    }
   }
 }
