@@ -1,7 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppStateProvider with ChangeNotifier {
+  Future<User?> getCurrentUser() async {
+    return FirebaseAuth.instance.currentUser;
+  }
+
   void hasOnboarded() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // set the onBoardCount to 1, the app only looks for if the value exists or not

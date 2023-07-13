@@ -9,7 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.remove('onBoardCount');
+  prefs.setBool('onBoarded', false);
 
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle.dark.copyWith(statusBarColor: Colors.black38),
