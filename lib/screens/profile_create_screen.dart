@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:fantascan/models/user_model.dart';
+import 'package:fantascan/providers/app_router.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,12 +20,16 @@ class ProfileCreateScreen extends StatefulWidget {
 }
 
 class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
-  String? name;
-  int? age;
-  String? bio;
+  final nameController = TextEditingController();
+  String? nameError = "";
+  final ageController = TextEditingController();
+  String? ageError = "";
+  final bioController = TextEditingController();
+  String? bioError = "";
   File? image;
   File? image2;
   File? image3;
+  String? imageError = "";
   String? userID = FirebaseAuth.instance.currentUser!.uid;
 
   final storage = FirebaseStorage.instance;
@@ -55,88 +61,146 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Create Profile',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
+          child: SingleChildScrollView(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Create Profile',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Pick 3 photos of yourself!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Pick 3 photos of yourself!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    imagePickerWidget(image, pickImage),
-                    imagePickerWidget(image2, pickImage2),
-                    imagePickerWidget(image3, pickImage3)
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'First Name',
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      imagePickerWidget(image, pickImage),
+                      imagePickerWidget(image2, pickImage2),
+                      imagePickerWidget(image3, pickImage3)
+                    ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                const TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Age',
+                  const SizedBox(height: 8),
+                  Text(
+                    imageError!,
+                    style: const TextStyle(color: Colors.red),
                   ),
-                ),
-                const SizedBox(height: 16),
-                const TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Bio',
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'First Name',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    try {
-                      if (image != null) {
-                        imageOneRef.putFile(image!);
-                      }
-                      if (image2 != null) {
-                        imageTwoRef.putFile(image2!);
-                      }
-                      if (image3 != null) {
-                        imageThreeRef.putFile(image3!);
-                      }
-                    } catch (e) {
-                      print(e);
-                    }
-                  },
-                  child: const Text('send images to bucket'),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () async {
-                    provider.profileCreated();
-                    GoRouter.of(context).go('/');
-                  },
-                  child: const Text('Skip ProfileCreate'),
-                ),
-              ]),
+                  const SizedBox(height: 8),
+                  Text(
+                    nameError!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: ageController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Age',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    ageError!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: bioController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Bio',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    bioError!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      submitNewUser();
+                    },
+                    child: const Text('Test Submit'),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      provider.profileCreated();
+                      GoRouter.of(context).go('/');
+                    },
+                    child: const Text('Skip ProfileCreate'),
+                  ),
+                ]),
+          ),
         ),
       ),
     );
+  }
+
+  void submitNewUser() {
+    bool upload1Successful = false;
+    bool upload2Successful = false;
+    bool upload3Successful = false;
+
+    if (checkImage() && checkOtherFields()) {
+      try {
+        imageOneRef.putFile(image!).snapshotEvents.listen((event) {
+          switch (event.state) {
+            case TaskState.success:
+              upload1Successful = true;
+              break;
+            default:
+              break;
+          }
+        });
+        imageTwoRef.putFile(image2!).snapshotEvents.listen((event) {
+          switch (event.state) {
+            case TaskState.success:
+              upload2Successful = true;
+              break;
+            default:
+              break;
+          }
+        });
+        imageThreeRef.putFile(image3!).snapshotEvents.listen((event) {
+          switch (event.state) {
+            case TaskState.success:
+              upload3Successful = true;
+              break;
+            default:
+              break;
+          }
+        });
+      } on FirebaseException catch (e) {
+        print(e);
+      } finally {
+        if (upload1Successful && upload2Successful && upload3Successful) {
+          //todo create user object and add to db here
+        }
+      }
+    }
   }
 
   Widget imagePickerWidget(
@@ -209,6 +273,51 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
       setState(() => image3 = imageTemp);
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
+    }
+  }
+
+  bool checkOtherFields() {
+    bool name = false;
+    bool age = false;
+    bool bio = false;
+
+    if (nameController.text.trim().isNotEmpty) {
+      name = true;
+    } else {
+      setState(() {
+        nameError = "Please enter your name";
+      });
+    }
+    if (ageController.text.trim().isNotEmpty) {
+      age = true;
+    } else {
+      setState(() {
+        ageError = "Please enter your age";
+      });
+    }
+    if (bioController.text.trim().isNotEmpty) {
+      bio = true;
+    } else {
+      setState(() {
+        bioError = "Please enter your bio";
+      });
+    }
+
+    if (name && age && bio) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool checkImage() {
+    if (image != null && image2 != null && image3 != null) {
+      return true;
+    } else {
+      setState(() {
+        imageError = "Please select 3 photos";
+      });
+      return false;
     }
   }
 }

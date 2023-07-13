@@ -21,6 +21,15 @@ class DbProvider extends ChangeNotifier {
     return users;
   }
 
+  Future<void> addUser(User user) async {
+    await db.collection('users').doc(user.email).set({
+      'name': user.name,
+      'age': user.age,
+      'email': user.email,
+      'urlImagePrimary': user.urlImagePrimary
+    });
+  }
+
   Future<bool> checkUser(String uid) async {
     return await db
         .collection('users')
