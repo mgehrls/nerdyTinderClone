@@ -5,29 +5,40 @@ import '../models/user_model.dart';
 
 class DbProvider extends ChangeNotifier {
   FirebaseFirestore db = FirebaseFirestore.instance;
-
-  Future<List<User>> getUsers() async {
-    List<User> users = [];
+  List<UserProfileInfo> users = [];
+  Future<List<UserProfileInfo>> getUsers() async {
+    List<UserProfileInfo> users = [];
     await db.collection('users').get().then((value) => {
           for (var element in value.docs)
             {
-              users.add(User(
-                  name: element.data()['name'],
-                  age: element.data()['age'],
-                  email: element.data()['email'],
-                  urlImagePrimary: element.data()['urlImagePrimary']))
+              users.add(UserProfileInfo(
+                uid: element.id,
+                name: element.data()['name'],
+                age: element.data()['age'],
+                email: element.data()['email'],
+                bio: element.data()['bio'],
+                profilePictureUrl: element.data()['profile_picture_url'],
+                secondaryPictureUrl: element.data()['secondary_picture_url'],
+                tertiaryPictureUrl: element.data()['tertiary_picture_url'],
+              ))
             }
         });
     return users;
   }
 
-  Future<void> addUser(User user) async {
-    await db.collection('users').doc(user.email).set({
+  Future<void> addUser(NewUser user) async {
+    print(user.uid);
+    print(user.name);
+    await db.collection('users').doc(user.uid).set({
       'name': user.name,
       'age': user.age,
       'email': user.email,
-      'urlImagePrimary': user.urlImagePrimary
-    });
+      'bio': user.bio,
+      'created_at': user.createdAt,
+      'profile_picture_url': user.profilePictureUrl,
+      'secondary_picture_url': user.secondaryPictureUrl,
+      'tertiary_picture_url': user.tertiaryPictureUrl,
+    }).onError((error, stackTrace) => print(error));
   }
 
   Future<bool> checkUser(String uid) async {

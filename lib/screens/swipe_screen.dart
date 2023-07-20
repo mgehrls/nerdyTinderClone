@@ -1,5 +1,6 @@
 import 'package:fantascan/components/header.dart';
 import 'package:fantascan/providers/card_provider.dart';
+import 'package:fantascan/providers/db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -64,7 +65,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
       return Center(
           child: ElevatedButton(
         onPressed: () {
-          provider.resetUsers();
+          getUsers();
         },
         child: const Padding(
           padding: EdgeInsets.all(20.0),
@@ -154,5 +155,11 @@ class _SwipeScreenState extends State<SwipeScreen> {
     }
 
     return MaterialStateProperty.resolveWith(getBorder);
+  }
+
+  void getUsers() async {
+    final db = Provider.of<DbProvider>(context, listen: false);
+    final cardProvider = Provider.of<CardProvider>(context, listen: false);
+    cardProvider.setUsers(await db.getUsers());
   }
 }

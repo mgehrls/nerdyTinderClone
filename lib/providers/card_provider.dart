@@ -6,13 +6,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 enum CardStatus { interested, notInterested, favorited, blocked }
 
 class CardProvider extends ChangeNotifier {
-  List<User> _users = [];
+  List<UserProfileInfo> _users = [];
   bool _isDragging = false;
   double _angle = 0;
   Offset _position = Offset.zero;
   Size _screenSize = Size.zero;
 
-  List<User> get users => _users;
+  List<UserProfileInfo> get users => _users;
   bool get isDragging => _isDragging;
   Offset get position => _position;
   double get angle => _angle;
@@ -158,39 +158,8 @@ class CardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setUsers(List<User>? users) {
+  void setUsers(List<UserProfileInfo>? users) {
     _users = users ?? [];
-    notifyListeners();
-  }
-
-  void resetUsers() {
-    _users = <User>[
-      const User(
-          name: "Pete",
-          age: 26,
-          email: "first user",
-          urlImagePrimary:
-              "https://images.unsplash.com/photo-1632333525618-808950db9503?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"),
-      const User(
-          name: "Chris",
-          age: 24,
-          email: "second user",
-          urlImagePrimary:
-              "https://images.unsplash.com/photo-1560298803-1d998f6b5249?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"),
-      const User(
-          name: "Jenna",
-          age: 21,
-          email: "third user",
-          urlImagePrimary:
-              "https://images.unsplash.com/photo-1581661701347-6e695689365b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y29zcGxheXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"),
-      const User(
-          name: "Marsha",
-          age: 32,
-          email: "fourth user",
-          urlImagePrimary:
-              "https://images.unsplash.com/photo-1616461046183-f62780d4f879?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80"),
-    ].reversed.toList();
-
     notifyListeners();
   }
 }

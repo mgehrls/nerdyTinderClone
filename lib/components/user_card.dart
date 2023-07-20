@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 
 class UserCard extends StatefulWidget {
-  final User user;
+  final UserProfileInfo user;
   final bool isFront;
 
   const UserCard({Key? key, required this.user, required this.isFront})
@@ -195,7 +195,7 @@ class _UserCardState extends State<UserCard> {
             Colors.blueGrey,
           ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
           image: DecorationImage(
-            image: NetworkImage(widget.user.urlImagePrimary),
+            image: NetworkImage(widget.user.profilePictureUrl),
             fit: BoxFit.cover,
           ),
         ),

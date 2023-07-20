@@ -7,6 +7,15 @@ class AppStateProvider with ChangeNotifier {
     return FirebaseAuth.instance.currentUser;
   }
 
+  Future<bool> isProfileCreated() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // get the onBoardCount value. If the value does not exist, return 0
+    bool? profileCreated = prefs.getBool('profileCreated') ?? false;
+    // Notify listener provides converted value to all it listeneres
+    notifyListeners();
+    return profileCreated;
+  }
+
   void hasOnboarded() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // set the onBoardCount to 1, the app only looks for if the value exists or not

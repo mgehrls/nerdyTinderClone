@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:fantascan/models/user_model.dart';
-import 'package:fantascan/providers/app_router.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import '../providers/db_provider.dart';
 
 class ProfileCreateScreen extends StatefulWidget {
   const ProfileCreateScreen({super.key});
@@ -31,6 +31,7 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
   File? image3;
   String? imageError = "";
   String? userID = FirebaseAuth.instance.currentUser!.uid;
+  String? userEmail = FirebaseAuth.instance.currentUser!.email;
 
   final storage = FirebaseStorage.instance;
   // ignore: prefer_interpolation_to_compose_strings
@@ -159,48 +160,38 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
     );
   }
 
-  void submitNewUser() {
-    bool upload1Successful = false;
-    bool upload2Successful = false;
-    bool upload3Successful = false;
-
+  void submitNewUser() async {
     if (checkImage() && checkOtherFields()) {
       try {
-        imageOneRef.putFile(image!).snapshotEvents.listen((event) {
-          switch (event.state) {
-            case TaskState.success:
-              upload1Successful = true;
-              break;
-            default:
-              break;
-          }
-        });
-        imageTwoRef.putFile(image2!).snapshotEvents.listen((event) {
-          switch (event.state) {
-            case TaskState.success:
-              upload2Successful = true;
-              break;
-            default:
-              break;
-          }
-        });
-        imageThreeRef.putFile(image3!).snapshotEvents.listen((event) {
-          switch (event.state) {
-            case TaskState.success:
-              upload3Successful = true;
-              break;
-            default:
-              break;
-          }
-        });
+        imageOneRef.putFile(image!);
+        imageTwoRef.putFile(image2!);
+        imageThreeRef.putFile(image3!);
+
+        NewUser newUser = NewUser(
+          uid: userID!,
+          name: nameController.text.trim(),
+          age: int.parse(ageController.text.trim()),
+          bio: bioController.text.trim(),
+          email: userEmail!,
+          createdAt: DateTime.now(),
+          profilePictureUrl: await imageOneRef.getDownloadURL(),
+          secondaryPictureUrl: await imageTwoRef.getDownloadURL(),
+          tertiaryPictureUrl: await imageThreeRef.getDownloadURL(),
+        );
+
+        Provider.of<DbProvider>(context, listen: false)
+            .addUser(newUser)
+            .onError((error, stackTrace) => print(error));
       } on FirebaseException catch (e) {
         print(e);
       } finally {
-        if (upload1Successful && upload2Successful && upload3Successful) {
-          //todo create user object and add to db here
-        }
+        Provider.of<AppStateProvider>(context, listen: false).profileCreated();
       }
     }
+  }
+
+  void goHome() {
+    GoRouter.of(context).go('/');
   }
 
   Widget imagePickerWidget(
