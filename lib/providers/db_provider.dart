@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import '../models/user_model.dart';
 
 class DbProvider extends ChangeNotifier {
@@ -24,6 +23,35 @@ class DbProvider extends ChangeNotifier {
             }
         });
     return users;
+  }
+
+  Future<UserProfileInfo> getCurrentUser(uid) async {
+    UserProfileInfo user = UserProfileInfo(
+        uid: uid,
+        name: "",
+        age: 0,
+        email: "",
+        bio: "",
+        profilePictureUrl: "",
+        secondaryPictureUrl: "",
+        tertiaryPictureUrl: "");
+    await db.collection('users').doc(uid).get().then((value) => {
+          user = UserProfileInfo(
+            uid: value.id,
+            name: value.data()!['name'],
+            age: value.data()!['age'],
+            email: value.data()!['email'],
+            bio: value.data()!['bio'],
+            profilePictureUrl: value.data()!['profile_picture_url'],
+            secondaryPictureUrl: value.data()!['secondary_picture_url'],
+            tertiaryPictureUrl: value.data()!['tertiary_picture_url'],
+          )
+        });
+    if (user.name == "") {
+      throw Exception("User not found");
+    } else {
+      return user;
+    }
   }
 
   Future<void> addUser(NewUser user) async {

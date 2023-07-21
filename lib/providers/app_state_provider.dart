@@ -1,10 +1,61 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fantascan/models/user_model.dart';
+import 'package:fantascan/providers/db_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppStateProvider with ChangeNotifier {
-  Future<User?> getCurrentUser() async {
-    return FirebaseAuth.instance.currentUser;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  UserProfileInfo? _currentUser;
+  UserProfileInfo? get currentUser => _currentUser;
+
+  fetchCurrentUser() async {
+    UserProfileInfo? user;
+    await db
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) => {
+              user = UserProfileInfo(
+                uid: value.id,
+                name: value.data()!['name'],
+                age: value.data()!['age'],
+                email: value.data()!['email'],
+                bio: value.data()!['bio'],
+                profilePictureUrl: value.data()!['profile_picture_url'],
+                secondaryPictureUrl: value.data()!['secondary_picture_url'],
+                tertiaryPictureUrl: value.data()!['tertiary_picture_url'],
+              )
+            });
+    _currentUser = user;
+    notifyListeners();
+  }
+
+  getCurrentUser() {
+    if (currentUser == null) {
+      try {
+        fetchCurrentUser();
+      } on Exception catch (e) {
+        print(e);
+      }
+      if (currentUser != null) {
+        return currentUser;
+      } else {
+        return UserProfileInfo(
+          uid: FirebaseAuth.instance.currentUser!.uid,
+          name: "name not found",
+          age: 0,
+          email: FirebaseAuth.instance.currentUser!.email!,
+          bio: "bio not found",
+          profilePictureUrl: "",
+          secondaryPictureUrl: "",
+          tertiaryPictureUrl: "",
+        );
+      }
+    } else {
+      return currentUser;
+    }
   }
 
   Future<bool> isProfileCreated() async {

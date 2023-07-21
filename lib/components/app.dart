@@ -8,8 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/app_router.dart';
 
 class MyApp extends StatefulWidget {
-  SharedPreferences prefs;
-  MyApp({required this.prefs, Key? key}) : super(key: key);
+  final SharedPreferences prefs;
+  const MyApp({required this.prefs, Key? key}) : super(key: key);
+
   @override
   State<MyApp> createState() => _MyAppState();
 }

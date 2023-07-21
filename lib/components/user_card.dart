@@ -27,8 +27,8 @@ class _UserCardState extends State<UserCard> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      SizedBox.expand(child: widget.isFront ? buildFrontCard() : buildCard());
+  Widget build(BuildContext context) => SizedBox.expand(
+      child: widget.isFront ? buildFrontCard() : buildCard(widget.user.uid));
 
   Widget buildFrontCard() => GestureDetector(
         child: LayoutBuilder(builder: (context, constraints) {
@@ -48,7 +48,7 @@ class _UserCardState extends State<UserCard> {
               duration: Duration(milliseconds: milliseconds),
               transform: rotatedMatrix..translate(position.dx, position.dy),
               child: Stack(children: [
-                buildCard(),
+                buildCard(widget.user.uid),
                 buildStamps(),
               ]));
         }),
@@ -186,42 +186,44 @@ class _UserCardState extends State<UserCard> {
     );
   }
 
-  Widget buildCard() => ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [
-            Colors.grey,
-            Colors.blueGrey,
-          ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
-          image: DecorationImage(
-            image: NetworkImage(widget.user.profilePictureUrl),
-            fit: BoxFit.cover,
-          ),
-        ),
+  Widget buildCard(String uid) {
+    return ClipRRect(
+        borderRadius: BorderRadius.circular(20),
         child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.transparent,
-                Colors.black,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.7, 1],
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(colors: [
+              Colors.grey,
+              Colors.blueGrey,
+            ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+            image: DecorationImage(
+              image: NetworkImage(widget.user.profilePictureUrl),
+              fit: BoxFit.cover,
             ),
           ),
           child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                const Spacer(),
-                buildName(widget.user.name, widget.user.age.toString()),
-                const SizedBox(height: 8),
-                buildStatus(),
-              ],
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.black,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.7, 1],
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Spacer(),
+                  buildName(widget.user.name, widget.user.age.toString()),
+                  const SizedBox(height: 8),
+                  buildStatus(),
+                ],
+              ),
             ),
           ),
-        ),
-      ));
+        ));
+  }
 }

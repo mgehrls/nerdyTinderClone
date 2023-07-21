@@ -32,6 +32,17 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
   String? imageError = "";
   String? userID = FirebaseAuth.instance.currentUser!.uid;
   String? userEmail = FirebaseAuth.instance.currentUser!.email;
+  late NewUser newUser = NewUser(
+    uid: userID!,
+    name: nameController.text.trim(),
+    age: int.parse(ageController.text.trim()),
+    bio: bioController.text.trim(),
+    email: userEmail!,
+    createdAt: DateTime.now(),
+    profilePictureUrl: "",
+    secondaryPictureUrl: "",
+    tertiaryPictureUrl: '',
+  );
 
   final storage = FirebaseStorage.instance;
   // ignore: prefer_interpolation_to_compose_strings
@@ -167,7 +178,7 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
         imageTwoRef.putFile(image2!);
         imageThreeRef.putFile(image3!);
 
-        NewUser newUser = NewUser(
+        newUser = NewUser(
           uid: userID!,
           name: nameController.text.trim(),
           age: int.parse(ageController.text.trim()),
@@ -178,13 +189,12 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
           secondaryPictureUrl: await imageTwoRef.getDownloadURL(),
           tertiaryPictureUrl: await imageThreeRef.getDownloadURL(),
         );
-
-        Provider.of<DbProvider>(context, listen: false)
-            .addUser(newUser)
-            .onError((error, stackTrace) => print(error));
       } on FirebaseException catch (e) {
         print(e);
       } finally {
+        Provider.of<DbProvider>(context, listen: false)
+            .addUser(newUser)
+            .onError((error, stackTrace) => print(error));
         Provider.of<AppStateProvider>(context, listen: false).profileCreated();
       }
     }
