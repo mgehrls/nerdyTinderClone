@@ -1,6 +1,5 @@
 import 'package:fantascan/models/app_page_extension.dart';
 import 'package:fantascan/providers/app_state_provider.dart';
-import 'package:fantascan/providers/db_provider.dart';
 import 'package:fantascan/screens/chat_screen.dart';
 import 'package:fantascan/screens/profile_create_screen.dart';
 import 'package:fantascan/screens/login_screen.dart';
@@ -13,8 +12,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-DbProvider dbProvider = DbProvider();
 
 CustomTransitionPage buildPageWithDefaultTransition<T>({
   required BuildContext context,
@@ -52,7 +49,7 @@ class AppRouter {
               body: StreamBuilder<User?>(
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData && prefs.getBool('profileCreated')!) {
+                  if (snapshot.hasData && appStateProvider.userLoaded) {
                     return SwipeScreen(
                       title: AppPage.home.routePageTitle,
                       context: context,
@@ -145,12 +142,9 @@ class AppRouter {
         ),
       ],
       redirect: (context, state) {
-        //define paths for redirect
         final String onboardPath =
             state.namedLocation(AppPage.onboard.routeName);
         bool isOnboarding = state.location == onboardPath;
-        // check if sharedPref as onBoardCount key or not
-        //if is does then we won't onboard else we will
         bool toOnboard = prefs.getBool('onBoarded')! ? false : true;
 
         if (toOnboard) {

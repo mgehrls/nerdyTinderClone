@@ -1,6 +1,8 @@
+import 'package:fantascan/providers/app_state_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
@@ -15,7 +17,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   String errorMessage = "";
-
   @override
   void dispose() {
     emailController.dispose();
@@ -131,9 +132,16 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   Future signIn() async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
+      )
+          .then(
+        (value) {
+          Provider.of<AppStateProvider>(context, listen: false)
+              .fetchCurrentUser();
+        },
       );
     } catch (e) {
       setState(() {

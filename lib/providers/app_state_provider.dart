@@ -3,59 +3,42 @@ import 'package:fantascan/models/user_model.dart';
 import 'package:fantascan/providers/db_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppStateProvider with ChangeNotifier {
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  final db = FirebaseFirestore.instance;
   UserProfileInfo? _currentUser;
   UserProfileInfo? get currentUser => _currentUser;
+  bool userLoaded = false;
 
-  fetchCurrentUser() async {
-    UserProfileInfo? user;
-    await db
+  Future<UserProfileInfo> fetchCurrentUser() async {
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((value) => {
-              user = UserProfileInfo(
+              _currentUser = UserProfileInfo(
                 uid: value.id,
-                name: value.data()!['name'],
-                age: value.data()!['age'],
-                email: value.data()!['email'],
-                bio: value.data()!['bio'],
-                profilePictureUrl: value.data()!['profile_picture_url'],
-                secondaryPictureUrl: value.data()!['secondary_picture_url'],
-                tertiaryPictureUrl: value.data()!['tertiary_picture_url'],
-              )
+                name: value.data()?['name'],
+                age: value.data()?['age'],
+                email: value.data()?['email'],
+                bio: value.data()?['bio'],
+                profilePictureUrl: value.data()?['profile_picture_url'],
+                secondaryPictureUrl: value.data()?['secondary_picture_url'],
+                tertiaryPictureUrl: value.data()?['tertiary_picture_url'],
+              ),
+              userLoaded = true
             });
-    _currentUser = user;
+
     notifyListeners();
+    return _currentUser!;
   }
 
-  getCurrentUser() {
-    if (currentUser == null) {
-      try {
-        fetchCurrentUser();
-      } on Exception catch (e) {
-        print(e);
-      }
-      if (currentUser != null) {
-        return currentUser;
-      } else {
-        return UserProfileInfo(
-          uid: FirebaseAuth.instance.currentUser!.uid,
-          name: "name not found",
-          age: 0,
-          email: FirebaseAuth.instance.currentUser!.email!,
-          bio: "bio not found",
-          profilePictureUrl: "",
-          secondaryPictureUrl: "",
-          tertiaryPictureUrl: "",
-        );
-      }
-    } else {
-      return currentUser;
-    }
+  signOutUser() {
+    _currentUser = null;
+    userLoaded = false;
+    notifyListeners();
   }
 
   Future<bool> isProfileCreated() async {

@@ -1,11 +1,9 @@
 import 'package:fantascan/components/header.dart';
 import 'package:fantascan/models/user_model.dart';
-import 'package:fantascan/providers/app_state_provider.dart';
-import 'package:fantascan/providers/db_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/app_state_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -19,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  late UserProfileInfo user;
+  late UserProfileInfo? user;
 
   @override
   void dispose() {
@@ -29,14 +27,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    user =
-        Provider.of<AppStateProvider>(context, listen: false).getCurrentUser();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    AppStateProvider appProvider = Provider.of<AppStateProvider>(context);
+    bool userLoaded = appProvider.userLoaded;
+    if (userLoaded == false) {
+      appProvider.fetchCurrentUser();
+    }
+    user = userLoaded ? appProvider.currentUser : null;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -61,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(user.name),
+                      user == null ? const Text("no name") : Text(user!.name),
                       const Text(
                         'This is where the profiles go',
                         style: TextStyle(

@@ -62,9 +62,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: const Text('Get Users')),
                     ElevatedButton(
                         onPressed: () async {
-                          await FirebaseAuth.instance
-                              .signOut()
-                              .whenComplete(() => GoRouter.of(context).go('/'));
+                          await FirebaseAuth.instance.signOut().whenComplete(
+                              () => {
+                                    appStateProvider.signOutUser(),
+                                    GoRouter.of(context).go('/')
+                                  });
                         },
                         child: const Text('Sign Out')),
                   ],
