@@ -49,35 +49,25 @@ class AppRouter {
               body: StreamBuilder<User?>(
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData && appStateProvider.userLoaded) {
-                    return SwipeScreen(
+                  if (!snapshot.hasData && !appStateProvider.userLoaded) {
+                    return const LoginWidget();
+                  } else if (snapshot.hasData &&
+                      !appStateProvider.profileCreated) {
+                    return const ProfileCreateScreen();
+                  } else if (snapshot.hasData &&
+                      appStateProvider.profileCreated &&
+                      appStateProvider.userLoaded) {
+                    return HomeScreen(
                       title: AppPage.home.routePageTitle,
                       context: context,
                     );
-                  } else if (snapshot.hasData &&
-                      !prefs.getBool('profileCreated')!) {
-                    return const ProfileCreateScreen();
                   } else {
-                    return const LoginWidget();
+                    return const Center(child: CircularProgressIndicator());
                   }
                 },
               ),
             ),
           ),
-          builder: (context, state) => Scaffold(
-              body: StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return SwipeScreen(
-                  title: AppPage.home.routePageTitle,
-                  context: context,
-                );
-              } else {
-                return const LoginWidget();
-              }
-            },
-          )),
         ),
         GoRoute(
             path: AppPage.onboard.routePath,

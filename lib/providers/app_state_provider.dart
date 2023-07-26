@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fantascan/models/user_model.dart';
-import 'package:fantascan/providers/db_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +9,14 @@ class AppStateProvider with ChangeNotifier {
   final db = FirebaseFirestore.instance;
   UserProfileInfo? _currentUser;
   UserProfileInfo? get currentUser => _currentUser;
+  String screen = "home";
   bool userLoaded = false;
+  bool profileCreated = false;
+
+  void setScreen(String newScreen) {
+    screen = newScreen;
+    notifyListeners();
+  }
 
   Future<UserProfileInfo> fetchCurrentUser() async {
     await FirebaseFirestore.instance
@@ -28,7 +34,8 @@ class AppStateProvider with ChangeNotifier {
                 secondaryPictureUrl: value.data()?['secondary_picture_url'],
                 tertiaryPictureUrl: value.data()?['tertiary_picture_url'],
               ),
-              userLoaded = true
+              userLoaded = true,
+              profileCreated = true
             });
 
     notifyListeners();
@@ -41,13 +48,15 @@ class AppStateProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> isProfileCreated() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // get the onBoardCount value. If the value does not exist, return 0
-    bool? profileCreated = prefs.getBool('profileCreated') ?? false;
-    // Notify listener provides converted value to all it listeneres
+  void createProfileComplete(context) {
+    profileCreated = true;
+    GoRouter.of(context).go('/home');
     notifyListeners();
-    return profileCreated;
+  }
+
+  void destroyProfile() {
+    profileCreated = false;
+    notifyListeners();
   }
 
   void hasOnboarded() async {
@@ -55,20 +64,6 @@ class AppStateProvider with ChangeNotifier {
     // set the onBoardCount to 1, the app only looks for if the value exists or not
     await prefs.setBool('onBoarded', true);
     // Notify listener provides converted value to all it listeneres
-    notifyListeners();
-  }
-
-  void profileCreated() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // set the onBoardCount to 1, the app only looks for if the value exists or not
-    await prefs.setBool('profileCreated', true);
-    // Notify listener provides converted value to all it listeneres
-    notifyListeners();
-  }
-
-  resetProfileCreated() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('profileCreated', false);
     notifyListeners();
   }
 

@@ -3,23 +3,27 @@ import 'package:fantascan/providers/card_provider.dart';
 import 'package:fantascan/providers/db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../components/user_card.dart';
+import '../providers/app_state_provider.dart';
 
-class SwipeScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   final BuildContext context;
 
-  const SwipeScreen({super.key, required this.title, required this.context});
+  const HomeScreen({super.key, required this.title, required this.context});
 
   final String title;
 
   @override
-  State<SwipeScreen> createState() => _SwipeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _SwipeScreenState extends State<SwipeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
+  late String screen = "home";
+
   @override
   Widget build(BuildContext context) {
+    AppStateProvider appStateProvider = Provider.of<AppStateProvider>(context);
+    screen = appStateProvider.screen;
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -35,19 +39,21 @@ class _SwipeScreenState extends State<SwipeScreen> {
         backgroundColor: Colors.transparent,
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                buildHeader(context),
-                const SizedBox(height: 8),
-                Expanded(child: buildCards()),
-                const SizedBox(height: 8),
-                buildButtons(),
-              ],
-            ),
-          ),
+              padding: const EdgeInsets.all(8.0), child: buildHomeScreen()),
         ),
       ),
+    );
+  }
+
+  Widget buildHomeScreen() {
+    return Column(
+      children: [
+        buildHeader(context),
+        const SizedBox(height: 8),
+        Expanded(child: buildCards()),
+        const SizedBox(height: 8),
+        buildButtons(),
+      ],
     );
   }
 

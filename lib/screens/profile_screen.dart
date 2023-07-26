@@ -2,6 +2,7 @@ import 'package:fantascan/components/header.dart';
 import 'package:fantascan/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fantascan/components/loading.dart';
 
 import '../providers/app_state_provider.dart';
 
@@ -32,6 +33,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     bool userLoaded = appProvider.userLoaded;
     if (userLoaded == false) {
       appProvider.fetchCurrentUser();
+
+      return loadingWidget(context);
     }
     user = userLoaded ? appProvider.currentUser : null;
 

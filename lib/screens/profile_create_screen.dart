@@ -159,8 +159,7 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () async {
-                      provider.profileCreated();
-                      GoRouter.of(context).go('/');
+                      provider.createProfileComplete(context);
                     },
                     child: const Text('Skip ProfileCreate'),
                   ),
@@ -172,11 +171,20 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
   }
 
   void submitNewUser() async {
+    AppStateProvider provider =
+        Provider.of<AppStateProvider>(context, listen: false);
+
     if (checkImage() && checkOtherFields()) {
       try {
-        imageOneRef.putFile(image!);
-        imageTwoRef.putFile(image2!);
-        imageThreeRef.putFile(image3!);
+        String profilePictureUrl = await imageOneRef
+            .putFile(image!)
+            .then((p0) => imageOneRef.getDownloadURL());
+        String secondaryPictureUrl = await imageTwoRef
+            .putFile(image2!)
+            .then((p0) => imageTwoRef.getDownloadURL());
+        String tertiaryPictureUrl = await imageThreeRef
+            .putFile(image3!)
+            .then((p0) => imageThreeRef.getDownloadURL());
 
         newUser = NewUser(
           uid: userID!,
@@ -185,9 +193,9 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
           bio: bioController.text.trim(),
           email: userEmail!,
           createdAt: DateTime.now(),
-          profilePictureUrl: await imageOneRef.getDownloadURL(),
-          secondaryPictureUrl: await imageTwoRef.getDownloadURL(),
-          tertiaryPictureUrl: await imageThreeRef.getDownloadURL(),
+          profilePictureUrl: profilePictureUrl,
+          secondaryPictureUrl: secondaryPictureUrl,
+          tertiaryPictureUrl: tertiaryPictureUrl,
         );
       } on FirebaseException catch (e) {
         print(e);
@@ -195,7 +203,8 @@ class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
         Provider.of<DbProvider>(context, listen: false)
             .addUser(newUser)
             .onError((error, stackTrace) => print(error));
-        Provider.of<AppStateProvider>(context, listen: false).profileCreated();
+        provider.createProfileComplete(context);
+        provider.fetchCurrentUser();
       }
     }
   }
