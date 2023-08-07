@@ -51,22 +51,31 @@ class AppRouter {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData && !appStateProvider.userLoaded) {
                     return const LoginWidget();
-                  } else if (snapshot.hasData &&
-                      !appStateProvider.profileCreated) {
-                    return const ProfileCreateScreen();
-                  } else if (snapshot.hasData &&
-                      appStateProvider.profileCreated &&
-                      appStateProvider.userLoaded) {
+                  } else if (snapshot.hasData && !appStateProvider.userLoaded) {
+                    appStateProvider.fetchCurrentUser();
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasData && appStateProvider.userLoaded) {
                     return HomeScreen(
                       title: AppPage.home.routePageTitle,
                       context: context,
                     );
                   } else {
+                    print(
+                        "${snapshot.connectionState}, ${appStateProvider.userLoaded}, ${snapshot.hasData}");
                     return const Center(child: CircularProgressIndicator());
                   }
                 },
               ),
             ),
+          ),
+        ),
+        GoRoute(
+          path: AppPage.profileCreate.routePath,
+          name: AppPage.profileCreate.routeName,
+          pageBuilder: (context, state) => buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: const ProfileCreateScreen(),
           ),
         ),
         GoRoute(
@@ -97,16 +106,6 @@ class AppRouter {
                 ),
             builder: (context, state) => const RegistrationWidget()),
         GoRoute(
-          path: AppPage.profileCreate.routePath,
-          name: AppPage.profileCreate.routeName,
-          pageBuilder: (context, state) => buildPageWithDefaultTransition(
-            context: context,
-            state: state,
-            child: const ProfileCreateScreen(),
-          ),
-          builder: (context, state) => const ProfileCreateScreen(),
-        ),
-        GoRoute(
           path: AppPage.profile.routePath,
           name: AppPage.profile.routeName,
           pageBuilder: (context, state) => buildPageWithDefaultTransition(
@@ -134,12 +133,18 @@ class AppRouter {
       redirect: (context, state) {
         final String onboardPath =
             state.namedLocation(AppPage.onboard.routeName);
+        final String profileCreatePath =
+            state.namedLocation(AppPage.profileCreate.routeName);
         bool isOnboarding = state.location == onboardPath;
         bool toOnboard = prefs.getBool('onBoarded')! ? false : true;
+        bool profileCreated = prefs.getBool('profileCreated')! ? true : false;
+        bool isCreatingProfile = state.location == profileCreatePath;
 
         if (toOnboard) {
           // return null if the current location is already OnBoardScreen to prevent looping
           return isOnboarding ? null : onboardPath;
+        } else if (!profileCreated) {
+          return isCreatingProfile ? null : profileCreatePath;
         }
         // returning null will tell router to don't mind redirect section
         return null;

@@ -19,24 +19,28 @@ class AppStateProvider with ChangeNotifier {
   }
 
   Future<UserProfileInfo> fetchCurrentUser() async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) => {
-              _currentUser = UserProfileInfo(
-                uid: value.id,
-                name: value.data()?['name'],
-                age: value.data()?['age'],
-                email: value.data()?['email'],
-                bio: value.data()?['bio'],
-                profilePictureUrl: value.data()?['profile_picture_url'],
-                secondaryPictureUrl: value.data()?['secondary_picture_url'],
-                tertiaryPictureUrl: value.data()?['tertiary_picture_url'],
-              ),
-              userLoaded = true,
-              profileCreated = true
-            });
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) => {
+                _currentUser = UserProfileInfo(
+                  uid: value.id,
+                  name: value.data()?['name'],
+                  age: value.data()?['age'],
+                  email: value.data()?['email'],
+                  bio: value.data()?['bio'],
+                  profilePictureUrl: value.data()?['profile_picture_url'],
+                  secondaryPictureUrl: value.data()?['secondary_picture_url'],
+                  tertiaryPictureUrl: value.data()?['tertiary_picture_url'],
+                ),
+                userLoaded = true,
+                profileCreated = true
+              });
+    } catch (e) {
+      print(e);
+    }
 
     notifyListeners();
     return _currentUser!;
@@ -56,6 +60,20 @@ class AppStateProvider with ChangeNotifier {
 
   void destroyProfile() {
     profileCreated = false;
+    notifyListeners();
+  }
+
+  void hasCreatedProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // set the onBoardCount to 1, the app only looks for if the value exists or not
+    await prefs.setBool('profileCreated', true);
+    // Notify listener provides converted value to all it listeneres
+    notifyListeners();
+  }
+
+  void resetCreateProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('profileCreated', false);
     notifyListeners();
   }
 

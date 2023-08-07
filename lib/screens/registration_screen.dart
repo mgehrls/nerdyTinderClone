@@ -140,7 +140,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
             password: passwordController.text.trim(),
           )
           .then((value) async => {
-                if (await db.checkUser(FirebaseAuth.instance.currentUser!.uid))
+                if (await db.userExists(FirebaseAuth.instance.currentUser!.uid))
                   {GoRouter.of(context).go('/')}
                 else
                   {GoRouter.of(context).go('/profileCreate')}

@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 
 class DbProvider extends ChangeNotifier {
   FirebaseFirestore db = FirebaseFirestore.instance;
+  String currentUserId = FirebaseAuth.instance.currentUser!.uid;
   List<UserProfileInfo> users = [];
+
   Future<List<UserProfileInfo>> getUsers() async {
     List<UserProfileInfo> users = [];
     await db.collection('users').get().then((value) => {
@@ -55,8 +58,6 @@ class DbProvider extends ChangeNotifier {
   }
 
   Future<void> addUser(NewUser user) async {
-    print(user.uid);
-    print(user.name);
     await db.collection('users').doc(user.uid).set({
       'name': user.name,
       'age': user.age,
@@ -69,11 +70,35 @@ class DbProvider extends ChangeNotifier {
     }).onError((error, stackTrace) => print(error));
   }
 
-  Future<bool> checkUser(String uid) async {
+  Future<bool> userExists(String uid) async {
     return await db
         .collection('users')
         .doc(uid)
         .get()
         .then((value) => value.exists);
+  }
+
+  void addLikedUser(String uid) {
+    db.collection('users').doc(currentUserId).update({
+      'likedUsers': FieldValue.arrayUnion([uid])
+    });
+  }
+
+  void addDislikedUser(String uid) {
+    db.collection('users').doc(currentUserId).update({
+      'dislikedUsers': FieldValue.arrayUnion([uid])
+    });
+  }
+
+  void addFavedUser(String uid) {
+    db.collection('users').doc(currentUserId).update({
+      'favedUsers': FieldValue.arrayUnion([uid])
+    });
+  }
+
+  void addBlockedUser(String uid) {
+    db.collection('users').doc(currentUserId).update({
+      'blockedUsers': FieldValue.arrayUnion([uid])
+    });
   }
 }

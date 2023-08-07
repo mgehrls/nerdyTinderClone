@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:fantascan/providers/card_provider.dart';
+import 'package:fantascan/providers/db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -64,8 +65,24 @@ class _UserCardState extends State<UserCard> {
         },
         onPanEnd: (details) {
           final provider = Provider.of<CardProvider>(context, listen: false);
+          final db = Provider.of<DbProvider>(context, listen: false);
 
-          provider.endPosition(details);
+          switch (provider.endPosition(details)) {
+            case "liked":
+              db.addLikedUser(widget.user.uid);
+              break;
+            case "not interested":
+              db.addDislikedUser(widget.user.uid);
+              break;
+            case "faved":
+              db.addFavedUser(widget.user.uid);
+              break;
+            case "blocked":
+              db.addBlockedUser(widget.user.uid);
+              break;
+            default:
+              break;
+          }
         },
       );
 

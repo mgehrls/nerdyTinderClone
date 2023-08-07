@@ -9,9 +9,9 @@ import 'package:provider/provider.dart';
 import '../providers/card_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
-  BuildContext context;
+  final BuildContext context;
 
-  SettingsScreen({super.key, required this.context});
+  const SettingsScreen({super.key, required this.context});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();

@@ -30,7 +30,7 @@ class CardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void endPosition(DragEndDetails details) {
+  String endPosition(DragEndDetails details) {
     _isDragging = false;
     final status = getStatus(force: true);
 
@@ -46,22 +46,25 @@ class CardProvider extends ChangeNotifier {
     switch (status) {
       case CardStatus.interested:
         like();
-        break;
+        notifyListeners();
+        return "liked";
       case CardStatus.notInterested:
         notInterested();
-        break;
+        notifyListeners();
+        return "not interested";
       case CardStatus.favorited:
         favorite();
-        break;
+        notifyListeners();
+        return "faved";
       case CardStatus.blocked:
         blocked();
-        break;
+        notifyListeners();
+        return "blocked";
       default:
         resetPosition();
-        break;
+        notifyListeners();
+        return "";
     }
-
-    notifyListeners();
   }
 
   void like() {

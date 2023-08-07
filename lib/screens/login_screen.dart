@@ -17,11 +17,19 @@ class _LoginWidgetState extends State<LoginWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   String errorMessage = "";
+  bool isMounted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isMounted = true;
+  }
+
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
-
+    isMounted = false;
     super.dispose();
   }
 
@@ -144,9 +152,11 @@ class _LoginWidgetState extends State<LoginWidget> {
         },
       );
     } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
-      });
+      if (isMounted) {
+        setState(() {
+          errorMessage = e.toString();
+        });
+      }
     }
   }
 }
